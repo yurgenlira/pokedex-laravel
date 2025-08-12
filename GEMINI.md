@@ -14,10 +14,10 @@ The primary goal of this project is to create a web application that functions a
 
 The project is built using:
 
-* **T**ailwind CSS: Used for all styling. The design should be clean, modern, and utility-first. No custom CSS should be written in separate files unless absolutely necessary.
-* **A**lpine.js: Used for any front-end interactivity that is not handled by Livewire. This includes simple state management, showing/hiding elements, and event listeners.
+<!-- * **T**ailwind CSS: Used for all styling. The design should be clean, modern, and utility-first. No custom CSS should be written in separate files unless absolutely necessary.
+* **A**lpine.js: Used for any front-end interactivity that is not handled by Livewire. This includes simple state management, showing/hiding elements, and event listeners. -->
 * **L**aravel: The backend framework that handles routing, data fetching, and rendering.
-* **L**ivewire: Used for creating dynamic, reactive components. It will handle the primary logic for fetching and displaying Pokémon data without a full page refresh.
+<!-- * **L**ivewire: Used for creating dynamic, reactive components. It will handle the primary logic for fetching and displaying Pokémon data without a full page refresh. -->
 
 ---
 

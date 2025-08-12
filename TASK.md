@@ -7,9 +7,9 @@
 
 ## Structure
 ### Active Work (Prioritized)
-- [ ] Create Main Pokémon List Page
-- [ ] Create Pokémon Detail Page
-- [ ] Implement Previous/Next Navigation
+- [ ] Create Main Pokémon List Page (Laravel Blade & Controller)
+- [ ] Create Pokémon Detail Page (Laravel Blade & Controller)
+- [ ] Implement Previous/Next Navigation (Laravel)
 
 ### Backlog
 - [ ] Implement search functionality
@@ -19,7 +19,6 @@
 ### Discoveries
 ❗ Important findings during implementation:
 - API calls should be handled by a dedicated service class.
-- Livewire components should be placed in `app/Http/Livewire`.
 
 ### Completed (Auto-archived after 7 days)
 - [x] Setup project structure (2025-08-12)
