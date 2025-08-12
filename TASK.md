@@ -21,6 +21,8 @@
 - API calls should be handled by a dedicated service class.
 
 ### Completed (Auto-archived after 7 days)
+- [x] Create Main Pokémon List Page (Laravel Blade & Controller) (2025-08-12)
+- [x] Create Pokémon Detail Page (Laravel Blade & Controller) (2025-08-12)
 - [x] Setup project structure (2025-08-12)
 
 ## Maintenance Rules

@@ -12,7 +12,17 @@
         <div class="container mx-auto px-4 py-8">
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
+                    @if ($previousPokemon)
+                        <a href="{{ route('pokemon.show', $previousPokemon) }}" class="text-blue-500 hover:underline">Previous</a>
+                    @else
+                        <div></div>
+                    @endif
                     <a href="{{ route('pokemon.index') }}" class="text-blue-500 hover:underline">Back to List</a>
+                    @if ($nextPokemon)
+                        <a href="{{ route('pokemon.show', $nextPokemon) }}" class="text-blue-500 hover:underline">Next</a>
+                    @else
+                        <div></div>
+                    @endif
                 </div>
                 <h1 class="text-4xl font-bold text-center capitalize mb-6">{{ $pokemon['name'] }}</h1>
                 
