@@ -33,3 +33,54 @@ jobs:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: php artisan test
+
+  laravel-dusk-tests: # New job for Dusk tests
+
+    runs-on: ubuntu-latest # Use ubuntu-latest for broader browser support
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.4'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
+        ini-values: post_max_size=256M, upload_max_filesize=256M
+        coverage: none # No code coverage for E2E tests
+
+    - name: Install Composer Dependencies
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Install Node.js Dependencies
+      run: npm install
+
+    - name: Build Frontend Assets
+      run: npm run build
+
+    - name: Generate App Key
+      run: php artisan key:generate
+
+    - name: Create .env.dusk.local
+      run: |
+        cp .env .env.dusk.local
+        echo "APP_URL=http://127.0.0.1:8000" >> .env.dusk.local
+        echo "APP_ENV=local" >> .env.dusk.local
+        echo "APP_DEBUG=true" >> .env.dusk.local
+        echo "DB_CONNECTION=sqlite" >> .env.dusk.local
+        echo "DB_DATABASE=/home/runner/work/pokedex-laravel/pokedex-laravel/database/database.sqlite" >> .env.dusk.local # Absolute path for CI
+
+    - name: Create Database for Dusk
+      run: |
+        mkdir -p database
+        touch database/database.sqlite
+
+    - name: Run Migrations for Dusk
+      run: php artisan migrate --env=dusk
+
+    - name: Start Laravel Server
+      run: php artisan serve --host=127.0.0.1 --port=8000 &
+
+    - name: Run Dusk Tests
+      run: php artisan dusk
+      env:
+        APP_URL: http://127.0.0.1:8000 # Ensure Dusk uses the correct URL
