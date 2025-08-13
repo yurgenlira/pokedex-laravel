@@ -21,6 +21,9 @@ class PokemonPageTest extends TestCase
     /** @test */
     public function home_page_displays_list_of_pokemons()
     {
+        // Use withoutVite() to disable Vite manifest checks during the test
+        $this->withoutVite();
+
         $mockService = Mockery::mock(PokemonService::class);
         $mockService->shouldReceive('getPokemons')
                     ->once()
@@ -41,6 +44,9 @@ class PokemonPageTest extends TestCase
     /** @test */
     public function pokemon_detail_page_displays_pokemon_details()
     {
+        // Use withoutVite() to disable Vite manifest checks during the test
+        $this->withoutVite();
+
         $mockService = Mockery::mock(PokemonService::class);
         $mockService->shouldReceive('getPokemon')
                     ->once()
