@@ -83,6 +83,12 @@ jobs:
       run: curl -I http://127.0.0.1:8000/
     - name: Run Dusk Tests
       run: php artisan dusk --env=dusk
+    - name: Upload Logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: laravel-logs
+        path: storage/logs/laravel.log
       # env:
       #   APP_URL: http://127.0.0.1:8000
     # - name: Upload Screenshots
