@@ -44,7 +44,7 @@ The project is built using:
 ### 3. Navigation
 
 * A navigation panel should be present on the detail page.
-* **Previous/Next Navigation:** Buttons to navigate to the previous and next Pokémon in the list. This logic will be handled by Livewire.
+* **Previous/Next Navigation:** Buttons to navigate to the previous and next Pokémon in the list.
 * **Home Button:** A button or link to return to the main list page.
 
 
@@ -65,10 +65,9 @@ The project is built using:
 
 ## Technical Constraints and Guidelines
 
-* **API Calls:** All external API calls should be handled by a dedicated service or class within Laravel to keep Livewire components clean.
-* **Livewire Components:** Use Livewire to manage the state of the list and detail pages. This includes fetching data, handling loading states, and managing navigation.
-* **Front-end Interaction:** Use Alpine.js for simple front-end interactions, such as toggling a modal or showing/hiding a loading spinner directly in the HTML.
+* **API Calls:** All external API calls should be handled by a dedicated service or class within Laravel
+<!-- * **Front-end Interaction:** Use Alpine.js for simple front-end interactions, such as toggling a modal or showing/hiding a loading spinner directly in the HTML. -->
 * **Code Style:** Adhere to the PSR-12 standard for PHP. Write clean, well-commented code.
-* **File Structure:** Follow the standard Laravel directory structure. Livewire components should be placed in `app/Http/Livewire`.
-* **User Interface:** Prioritize a user-friendly and intuitive interface. Use Tailwind CSS for a modern, minimalist design.
+* **File Structure:** Follow the standard Laravel directory structure.
+* **User Interface:** Prioritize a user-friendly and intuitive interface.
 * **Testing:** Write unit tests for both the front-end and back-end components.
