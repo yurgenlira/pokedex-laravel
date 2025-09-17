@@ -81,8 +81,6 @@ jobs:
       run: php artisan migrate --env=dusk
     - name: Start Laravel Server
       run: php artisan serve --no-reload &
-    - name:  DEBUG - Check if Laravel server is running
-      run: curl -I http://127.0.0.1:8000/
     - name: Run Dusk Tests
       run: php artisan dusk --env=dusk
     - name: Upload Logs
@@ -91,8 +89,6 @@ jobs:
       with:
         name: laravel-logs
         path: storage/logs/laravel.log
-      # env:
-      #   APP_URL: http://127.0.0.1:8000
     # - name: Upload Screenshots
     #   if: failure()
     #   uses: actions/upload-artifact@v4
