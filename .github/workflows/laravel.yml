@@ -68,6 +68,8 @@ jobs:
       run: php artisan dusk:chrome-driver --detect
     - name: Start Chrome Driver
       run: ./vendor/laravel/dusk/bin/chromedriver-linux &
+    - name: Load Environment Variables for CI
+      run: cp .env.dusk.ci .env
     - name: Create Database
       run: |
         mkdir -p database
