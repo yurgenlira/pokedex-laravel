@@ -13,7 +13,7 @@ jobs:
     - name: Install Act dependencies
       if: ${{ env.ACT }}
       run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzip-dev
-    - name: Setup PHP with PECL extension
+    - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
@@ -39,52 +39,56 @@ jobs:
         DB_DATABASE: database/database.sqlite
       run: php artisan test
 
-  # e2e-tests:
-  #   runs-on: ubuntu-24.04
-  #   steps:
-  #   - name: Install Act dependencies
-  #     if: ${{ env.ACT }}
-  #     run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzip-dev
-  #   - uses: actions/checkout@v4
-  #   - name: Setup PHP
-  #     uses: shivammathur/setup-php@v2
-  #     with:
-  #       php-version: '8.3'
-  #       extensions: none, curl, dom, fileinfo, iconv, mbstring, pdo, pdo_sqlite, tokenizer, xml, xmlwriter, zip
-  #       # ini-values: post_max_size=256M, upload_max_filesize=256M
-  #       coverage: none # No code coverage for E2E tests
-  #   - name: Install Composer Dependencies
-  #     run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-  #   - name: Install Node.js Dependencies
-  #     run: npm install
-  #   - name: Build Frontend Assets
-  #     run: npm run build
-  #   # - name: Generate App Key
-  #   #   run: php artisan key:generate
-  #   - name: Create .env.dusk.local
-  #     run: |
-  #       touch .env.dusk.local
-  #       echo "APP_URL=http://127.0.0.1:8000" >> .env.dusk.local
-  #       echo "APP_ENV=local" >> .env.dusk.local
-  #       echo "APP_DEBUG=true" >> .env.dusk.local
-  #       echo "DB_CONNECTION=sqlite" >> .env.dusk.local
-  #       echo "DB_DATABASE=database/database.sqlite" >> .env.dusk.local
-  #       echo "APP_KEY=base64:xbfUGE7oNqOMDfEaoyBoNZZvUWB/he38p9L1Tv1Xp4s=" >> .env.dusk.local
-  #       echo "DUSK_HEADLESS_CHROME=true"
-  #   - name: Create Database for Dusk
-  #     run: |
-  #       mkdir -p database
-  #       touch database/database.sqlite
-  #   - name: Run Migrations for Dusk
-  #     run: php artisan migrate --env=dusk
-  #   - name: Start Laravel Server
-  #     run: php artisan serve --host=127.0.0.1 --port=8000 &
-  #   - name: Run Dusk Tests
-  #     run: php artisan dusk
-  #     env:
-  #       APP_URL: http://127.0.0.1:8000
-    # - name: Debugging
-    #   run: |
-    #     echo "Starting debug session..."
-    #     # This command will run for a long time, keeping the container alive
-    #     sleep 3600
+  e2e-tests:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Install Act dependencies
+      if: ${{ env.ACT }}
+      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzip-dev  libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libxkbcommon-x11-0 libxcomposite1 libxdamage1 libxfixes3
+    - uses: actions/checkout@v4
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: none, curl, dom, fileinfo, iconv, mbstring, pdo, pdo_sqlite, tokenizer, xml, xmlwriter, zip
+    - name: Install Composer Dependencies
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+    - name: Install Node.js Dependencies
+      run: npm install
+    - name: Build Frontend Assets
+      run: npm run build
+    - name: Install Chrome and ChromeDriver
+      run: |
+        # Install latest Chrome
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt install -y ./google-chrome-stable_current_amd64.deb
+    - name:  Install the Chrome driver
+      run: php artisan dusk:chrome-driver --detect
+    - name: Start Chrome Driver
+      run: ./vendor/laravel/dusk/bin/chromedriver-linux &
+    - name: Create Database
+      run: |
+        mkdir -p database
+        touch database/database.sqlite
+    - name: Run Migrations
+      run: php artisan migrate --env=dusk
+    - name: Start Laravel Server
+      run: php artisan serve --no-reload &
+    - name: Run Dusk Tests
+      run: php artisan dusk --env=dusk
+      # env:
+      #   APP_URL: http://127.0.0.1:8000
+    # - name: Upload Screenshots
+    #   if: failure()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: screenshots
+    #     path: tests/Browser/screenshots
+    # - name: Upload Console Logs
+    #   if: failure()
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: console
+    #     path: tests/Browser/console

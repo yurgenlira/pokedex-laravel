@@ -38,7 +38,10 @@ abstract class DuskTestCase extends BaseTestCase
             return $items->merge([
                 '--disable-gpu',
                 '--headless=new',
-            ]);
+                '--window-size=1920,1080',
+                '--no-sandbox',
+                '--user-data-dir=' . sys_get_temp_dir() . '/chrome-profile-' . uniqid(),
+      ]);
         })->all());
 
         return RemoteWebDriver::create(
