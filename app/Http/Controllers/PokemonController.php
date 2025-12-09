@@ -43,10 +43,24 @@ class PokemonController extends Controller
             $nextPokemon = $allPokemons[$currentIndex + 1]['name'];
         }
 
+        $userRating = 0;
+        if (Auth::check()) {
+            $pokemonRecord = Pokemon::where('name', $name)->first();
+            if ($pokemonRecord) {
+                $ratingRecord = Rating::where('user_id', Auth::id())
+                    ->where('pokemon_id', $pokemonRecord->id)
+                    ->first();
+                if ($ratingRecord) {
+                    $userRating = $ratingRecord->rating;
+                }
+            }
+        }
+
         return view('pokemon.show', [
             'pokemon' => $pokemon,
             'previousPokemon' => $previousPokemon,
             'nextPokemon' => $nextPokemon,
+            'userRating' => $userRating,
         ]);
     }
 

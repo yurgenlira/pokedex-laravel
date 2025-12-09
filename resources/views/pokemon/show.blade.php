@@ -13,14 +13,29 @@
             <!-- Header -->
             <div class="flex justify-between items-center mb-8">
                 <a href="{{ route('pokemon.index') }}" class="text-3xl font-bold text-gray-800 dark:text-white">Pokedex</a>
-                <div class="space-x-4">
+                <div class="space-x-4 flex items-center">
                     <a href="{{ route('pokemon.leaderboard') }}" class="text-blue-500 hover:text-blue-700">Leaderboard</a>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="text-blue-500 hover:text-blue-700">Dashboard</a>
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-red-500 hover:text-red-700">Log out</button>
-                        </form>
+                        <div x-data="{ open: false }" class="relative">
+                            <button @click="open = !open" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                <div>{{ Auth::user()->name }}</div>
+                                <div class="ms-1">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </button>
+
+                            <div x-show="open" @click.outside="open = false"
+                                class="absolute right-0 z-50 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                style="display: none;">
+                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Profile') }}</a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">{{ __('Log Out') }}</a>
+                                </form>
+                            </div>
+                        </div>
                     @else
                         <a href="{{ route('login') }}" class="text-blue-500 hover:text-blue-700">Log in</a>
                         <a href="{{ route('register') }}" class="text-blue-500 hover:text-blue-700">Register</a>
@@ -48,14 +63,14 @@
                         <img src="{{ $pokemon['sprites']['front_default'] }}" alt="{{ $pokemon['name'] }}" class="w-48 h-48 object-contain">
 
                         <!-- Rating Section -->
-                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 w-full flex flex-col items-center">
+                        <div x-data="{ rating: {{ $userRating ?? 0 }}, hoverRating: 0 }" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 w-full flex flex-col items-center">
                             <h3 class="text-xl font-bold mb-4">Rate this Pokemon</h3>
                             @auth
                                 <form x-ref="ratingForm" action="{{ route('pokemon.rate', $pokemon['name']) }}" method="POST" class="flex flex-col items-center gap-4">
                                     @csrf
                                     <input type="hidden" name="image_url" value="{{ $pokemon['sprites']['front_default'] }}">
 
-                                    <div x-data="{ rating: 0, hoverRating: 0 }" class="flex space-x-1">
+                                    <div class="flex space-x-1">
                                         <input type="hidden" name="rating" :value="rating" required>
                                         <template x-for="star in 5">
                                             <button type="button"
@@ -70,12 +85,13 @@
                                                 </svg>
                                             </button>
                                         </template>
-                                        <div class="ml-2 text-gray-700 dark:text-gray-300 self-center" x-text="hoverRating || rating ? (hoverRating || rating) + ' / 5' : 'Select rating'"></div>
+
                                     </div>
                                 </form>
                                 @if(session('success'))
                                     <p class="text-green-600 font-semibold mt-2">{{ session('success') }}</p>
                                 @endif
+                                <div class="ml-2 text-gray-700 dark:text-gray-300 self-center" x-text="hoverRating || rating ? (hoverRating || rating) + ' / 5' : ''"></div>
                             @else
                                 <p class="text-gray-700 dark:text-gray-300 text-center">
                                     Please <a href="{{ route('login') }}" class="text-blue-600 hover:underline font-bold">log in</a> to rate.

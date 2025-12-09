@@ -9,9 +9,7 @@ Route::get('/leaderboard', [PokemonController::class, 'leaderboard'])->name('pok
 Route::get('/pokemon/{name}', [PokemonController::class, 'show'])->name('pokemon.show');
 Route::post('/pokemon/{name}/rate', [PokemonController::class, 'rate'])->middleware(['auth'])->name('pokemon.rate');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
