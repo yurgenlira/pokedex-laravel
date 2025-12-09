@@ -42,16 +42,16 @@
                     @endauth
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
                 <div class="flex justify-between items-center mb-4">
                     @if ($previousPokemon)
-                        <a href="{{ route('pokemon.show', $previousPokemon) }}" class="text-blue-500 hover:underline">Previous</a>
+                        <a href="{{ route('pokemon.show', $previousPokemon) }}" class="text-blue-500 hover:underline dark:text-blue-400">Previous</a>
                     @else
                         <div></div>
                     @endif
-                    <a href="{{ route('pokemon.index') }}" class="text-blue-500 hover:underline">Back to List</a>
+                    <a href="{{ route('pokemon.index') }}" class="text-blue-500 hover:underline dark:text-blue-400">Back to List</a>
                     @if ($nextPokemon)
-                        <a href="{{ route('pokemon.show', $nextPokemon) }}" class="text-blue-500 hover:underline">Next</a>
+                        <a href="{{ route('pokemon.show', $nextPokemon) }}" class="text-blue-500 hover:underline dark:text-blue-400">Next</a>
                     @else
                         <div></div>
                     @endif
