@@ -8,6 +8,27 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
+    @php
+        $typeColors = [
+            'fire' => 'bg-orange-400 text-white',
+            'water' => 'bg-blue-400 text-white',
+            'grass' => 'bg-green-400 text-white',
+            'electric' => 'bg-yellow-300 text-yellow-900',
+            'ice' => 'bg-cyan-200 text-cyan-900',
+            'fighting' => 'bg-red-500 text-white',
+            'poison' => 'bg-purple-400 text-white',
+            'ground' => 'bg-yellow-600 text-white',
+            'flying' => 'bg-indigo-300 text-indigo-900',
+            'psychic' => 'bg-pink-400 text-white',
+            'bug' => 'bg-lime-400 text-lime-900',
+            'rock' => 'bg-stone-500 text-white',
+            'ghost' => 'bg-violet-600 text-white',
+            'dragon' => 'bg-indigo-600 text-white',
+            'steel' => 'bg-slate-300 text-slate-800',
+            'fairy' => 'bg-rose-300 text-rose-900',
+            'normal' => 'bg-gray-300 text-gray-800',
+        ];
+    @endphp
     <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <div class="container mx-auto px-4 py-8">
             <!-- Header -->
@@ -79,7 +100,7 @@
                                                 @mouseleave="hoverRating = 0"
                                                 class="focus:outline-none focus:scale-110 transition-transform duration-150">
                                                 <svg class="w-8 h-8"
-                                                    :class="{ 'text-yellow-400': star <= (hoverRating || rating), 'text-gray-400': star > (hoverRating || rating) }"
+                                                    :class="{ 'text-yellow-400': star <= (hoverRating || rating), 'text-gray-300': star > (hoverRating || rating) }"
                                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                 </svg>
@@ -91,7 +112,7 @@
                                 @if(session('success'))
                                     <p class="text-green-600 font-semibold mt-2">{{ session('success') }}</p>
                                 @endif
-                                <div class="ml-2 text-gray-700 dark:text-gray-300 self-center" x-text="hoverRating || rating ? (hoverRating || rating) + ' / 5' : ''"></div>
+                                <div class="ml-2 text-gray-700 dark:text-gray-300 font-medium self-center" x-text="hoverRating || rating ? (hoverRating || rating) + ' / 5' : ''"></div>
                             @else
                                 <p class="text-gray-700 dark:text-gray-300 text-center">
                                     Please <a href="{{ route('login') }}" class="text-blue-600 hover:underline font-bold">log in</a> to rate.
@@ -105,7 +126,9 @@
                         <p class="text-lg mb-2"><strong>Weight:</strong> {{ $pokemon['weight'] / 10 }} kg</p>
                         <p class="text-lg mb-2"><strong>Types:</strong>
                             @foreach ($pokemon['types'] as $type)
-                                <span class="inline-block bg-blue-200 rounded-full px-3 py-1 text-sm font-semibold text-blue-800 mr-2">{{ ucfirst($type['type']['name']) }}</span>
+                                <span class="inline-block rounded-full px-3 py-1 text-sm font-semibold mr-2 {{ $typeColors[$type['type']['name']] ?? 'bg-gray-200 text-gray-800' }}">
+                                    {{ ucfirst($type['type']['name']) }}
+                                </span>
                             @endforeach
                         </p>
                         <h3 class="text-xl font-semibold mt-4 mb-2">Abilities:</h3>
