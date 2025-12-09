@@ -76,6 +76,22 @@ Follow these steps to set up the project locally.
 
    Visit `http://localhost:8000` in your browser.
 
+## 🔧 Useful Commands
+
+### Clearing Caches
+If you encounter issues with config or views not updating, use these commands to clear the application cache:
+
+```bash
+# Clear all caches (Config, Route, Cache, View)
+php artisan optimize:clear
+
+# Clear specific caches
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+```
+
 ## 🧪 Testing
 
 Run the test suite to ensure everything is working correctly:
