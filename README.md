@@ -61,6 +61,7 @@ Follow these steps to set up the project locally.
    ```bash
    cp .env.example .env
    php artisan key:generate
+   php artisan migrate
    ```
 
 5. **Start the Application**
@@ -98,6 +99,14 @@ Run the test suite to ensure everything is working correctly:
 
 ```bash
 php artisan test
+```
+
+### End-to-End Testing (Dusk)
+
+To run browser-based E2E tests:
+
+```bash
+php artisan dusk --env=dusk
 ```
 
 ## 🤝 Contributing
