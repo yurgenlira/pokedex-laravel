@@ -54,7 +54,7 @@ class PokemonController extends Controller
     public function rate(Request $request, $name)
     {
         $request->validate([
-            'rating' => 'required|integer|min:1|max:10',
+            'rating' => 'required|integer|min:1|max:5',
             'image_url' => 'required|string',
         ]);
 

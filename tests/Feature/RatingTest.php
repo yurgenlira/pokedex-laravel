@@ -19,7 +19,7 @@ class RatingTest extends TestCase
 
         $response = $this->actingAs($user)
             ->post(route('pokemon.rate', $pokemonName), [
-                'rating' => 5,
+                'rating' => 4,
                 'image_url' => 'http://example.com/pikachu.png',
             ]);
 
@@ -27,7 +27,7 @@ class RatingTest extends TestCase
         $this->assertDatabaseHas('pokemons', ['name' => $pokemonName]);
         $this->assertDatabaseHas('ratings', [
             'user_id' => $user->id,
-            'rating' => 5,
+            'rating' => 4,
         ]);
     }
 
@@ -48,13 +48,13 @@ class RatingTest extends TestCase
         $pokemon1 = Pokemon::create(['name' => 'pikachu', 'image_url' => 'img1']);
         $pokemon2 = Pokemon::create(['name' => 'charmander', 'image_url' => 'img2']);
 
-        Rating::create(['user_id' => $user->id, 'pokemon_id' => $pokemon1->id, 'rating' => 10]);
-        Rating::create(['user_id' => $user->id, 'pokemon_id' => $pokemon2->id, 'rating' => 5]);
+        Rating::create(['user_id' => $user->id, 'pokemon_id' => $pokemon1->id, 'rating' => 5]);
+        Rating::create(['user_id' => $user->id, 'pokemon_id' => $pokemon2->id, 'rating' => 3]);
 
         $response = $this->get(route('pokemon.leaderboard'));
 
         $response->assertStatus(200);
         $response->assertSee('pikachu');
-        $response->assertSee('10.0');
+        $response->assertSee('5.0');
     }
 }
