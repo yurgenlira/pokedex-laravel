@@ -2,37 +2,21 @@ name: Laravel CI
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: [ "main" ]
 
 jobs:
   unit-tests:
     runs-on: ubuntu-24.04
     steps:
-    - name: Install Act dependencies
-      if: ${{ env.ACT }}
-      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzip-dev
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Laravel Setup (Shared)
+      uses: ./.github/actions/setup-laravel
       with:
         php-version: '8.3'
-        extensions: none, curl, dom, fileinfo, iconv, mbstring, pdo, pdo_sqlite, tokenizer, xml, xmlwriter, zip
-    - uses: actions/checkout@v4
-    - name: Copy .env
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-    - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-    - name: Generate key
-      run: php artisan key:generate
-    - name: Directory Permissions
-      run: chmod -R 777 storage bootstrap/cache
-    - name: Create Database
-      run: |
-        mkdir -p database
-        touch database/database.sqlite
-    - name: Run Migrations
-      run: php artisan migrate
+        copy-env-file: '.env.ci'
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       env:
         DB_CONNECTION: sqlite
@@ -42,21 +26,16 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-24.04
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
     - name: Install Act dependencies
       if: ${{ env.ACT }}
-      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzip-dev  libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libxkbcommon-x11-0 libxcomposite1 libxdamage1 libxfixes3
-    - uses: actions/checkout@v4
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      run: sudo apt-get update && sudo apt-get install -y libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon0 libxkbcommon-x11-0 libxcomposite1 libxdamage1 libxfixes3
+    - name: Laravel Setup (Shared)
+      uses: ./.github/actions/setup-laravel
       with:
         php-version: '8.3'
-        extensions: none, curl, dom, fileinfo, iconv, mbstring, pdo, pdo_sqlite, tokenizer, xml, xmlwriter, zip
-    - name: Install Composer Dependencies
-      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
-    - name: Install Node.js Dependencies
-      run: npm install
-    - name: Build Frontend Assets
-      run: npm run build
+        copy-env-file: '.env.ci'
     - name: Install Chrome and ChromeDriver
       run: |
         # Install latest Chrome
@@ -68,36 +47,28 @@ jobs:
       run: php artisan dusk:chrome-driver --detect
     - name: Start Chrome Driver
       run: ./vendor/laravel/dusk/bin/chromedriver-linux &
-    - name: Load Environment Variables for CI
-      run: cp .env.dusk.ci .env
-    - name: Create Database
-      run: |
-        mkdir -p database
-        touch database/database.sqlite
-    - name: Run Migrations
-      env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
-      run: php artisan migrate --env=dusk
     - name: Start Laravel Server
       run: php artisan serve --no-reload &
     - name: Run Dusk Tests
-      run: php artisan dusk --env=dusk
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: database/database.sqlite
+      run: php artisan dusk
     - name: Upload Logs
       if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: laravel-logs
         path: storage/logs/laravel.log
-    # - name: Upload Screenshots
-    #   if: failure()
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: screenshots
-    #     path: tests/Browser/screenshots
-    # - name: Upload Console Logs
-    #   if: failure()
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: console
-    #     path: tests/Browser/console
+    - name: Upload Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: screenshots
+        path: tests/Browser/screenshots
+    - name: Upload Console Logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: console
+        path: tests/Browser/console
