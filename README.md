@@ -112,6 +112,35 @@ To run browser-based E2E tests:
 php artisan dusk
 ```
 
+### Local CI/CD with Act (`act`)
+
+This project supports running GitHub Actions workflows locally using [act](https://github.com/nektos/act). This is useful for testing CI/CD changes without pushing to the repository.
+
+**Prerequisites:**
+
+*   [Docker](https://www.docker.com/get-started)
+*   [act](https://github.com/nektos/act#installation)
+
+**Running Workflows:**
+
+To run the entire CI/CD pipeline:
+
+```bash
+act
+```
+
+To run a specific job:
+
+```bash
+act -j <job-name>
+```
+
+For example, to run the `unit-tests` job:
+
+```bash
+act -j unit-tests
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
