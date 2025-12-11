@@ -19,7 +19,10 @@ The goal is to demonstrate a clean architecture, modern UI interaction and robus
   - Base Stats (HP, Attack, Defense, Speed, etc.)
   - Types and Abilities (including hidden abilities)
 - **Seamless Navigation**: Easily navigate between previous and next Pokémon entries.
-- **Modern UI**: A premium design utilizing modern CSS techniques, vibrant colors, and smooth interactions.
+- **Interactive Rating System**: Authenticated users can rate Pokémon on a 5-star scale.
+- **Live Leaderboard**: View the top 10 highest-rated Pokémon community-wide.
+- **Dynamic Theming**: Pokémon detail views adapt their color scheme based on the Pokémon's type for an immersive experience.
+- **Modern UI**: A premium design utilizing modern CSS techniques, vibrant colors, dark mode support, and smooth interactions.
 
 ## 🛠 Tech Stack
 
@@ -106,7 +109,36 @@ php artisan test
 To run browser-based E2E tests:
 
 ```bash
-php artisan dusk --env=dusk
+php artisan dusk
+```
+
+### Local CI/CD with Act (`act`)
+
+This project supports running GitHub Actions workflows locally using [act](https://github.com/nektos/act). This is useful for testing CI/CD changes without pushing to the repository.
+
+**Prerequisites:**
+
+*   [Docker](https://www.docker.com/get-started)
+*   [act](https://github.com/nektos/act#installation)
+
+**Running Workflows:**
+
+To run the entire CI/CD pipeline:
+
+```bash
+act
+```
+
+To run a specific job:
+
+```bash
+act -j <job-name>
+```
+
+For example, to run the `unit-tests` job:
+
+```bash
+act -j unit-tests
 ```
 
 ## 🤝 Contributing

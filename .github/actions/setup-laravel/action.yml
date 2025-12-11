@@ -1,0 +1,69 @@
+name: 'Laravel Setup'
+description: 'Sets up PHP, Composer, Node, generates key, and prepares SQLite DB'
+
+inputs:
+  php-version:
+    description: 'PHP version to use'
+    required: true
+    default: '8.3'
+  composer-opts:
+    description: 'Additional options for composer install'
+    required: false
+    default: '-q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist'
+  copy-env-file:
+    description: 'The .env file to copy to .env (e.g., .env.ci or .env.dusk.ci)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Act dependencies
+      if: ${{ env.ACT }}
+      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzip-dev
+      shell: bash
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+        # Common Laravel extensions
+        extensions: none, curl, dom, fileinfo, iconv, mbstring, pdo, pdo_sqlite, tokenizer, xml, xmlwriter, zip
+
+    - name: Copy Environment File (${{ inputs.copy-env-file }})
+      # Use the input to determine which env file to copy to the default .env
+      run: cp ${{ inputs.copy-env-file }} .env
+      shell: bash
+
+    - name: Install Composer dependencies
+      # Use the input for flexibility (e.g., different optimization flags)
+      run: composer install ${{ inputs.composer-opts }}
+      shell: bash
+
+    - name: Install Node.js dependencies
+      run: npm install
+      shell: bash
+
+    - name: Build frontend assets
+      run: npm run build
+      shell: bash
+
+    - name: Generate Application Key
+      run: php artisan key:generate
+      shell: bash
+
+    - name: Directory permissions
+      run: chmod -R 777 storage bootstrap/cache
+      shell: bash
+
+    - name: Create database
+      run: |
+        mkdir -p database
+        touch database/database.sqlite
+      shell: bash
+
+    - name: Run migrations
+      env:
+        DB_CONNECTION: sqlite
+        DB_DATABASE: database/database.sqlite
+      run: php artisan migrate
+      shell: bash

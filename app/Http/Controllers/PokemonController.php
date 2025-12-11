@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Services\PokemonService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Pokemon;
+use App\Models\Rating;
 
 class PokemonController extends Controller
 {
@@ -39,10 +43,62 @@ class PokemonController extends Controller
             $nextPokemon = $allPokemons[$currentIndex + 1]['name'];
         }
 
+        $userRating = 0;
+        if (Auth::check()) {
+            $pokemonRecord = Pokemon::where('name', $name)->first();
+            if ($pokemonRecord) {
+                $ratingRecord = Rating::where('user_id', Auth::id())
+                    ->where('pokemon_id', $pokemonRecord->id)
+                    ->first();
+                if ($ratingRecord) {
+                    $userRating = $ratingRecord->rating;
+                }
+            }
+        }
+
         return view('pokemon.show', [
             'pokemon' => $pokemon,
             'previousPokemon' => $previousPokemon,
             'nextPokemon' => $nextPokemon,
+            'userRating' => $userRating,
+        ]);
+    }
+
+
+    public function rate(Request $request, $name)
+    {
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'image_url' => 'required|string',
+        ]);
+
+        $pokemon = Pokemon::firstOrCreate(
+            ['name' => $name],
+            ['image_url' => $request->image_url]
+        );
+
+        Rating::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'pokemon_id' => $pokemon->id,
+            ],
+            ['rating' => $request->rating]
+        );
+
+        return back()->with('success', 'Rating saved!');
+    }
+
+    public function leaderboard()
+    {
+        $topPokemons = Rating::select('pokemon_id', DB::raw('avg(rating) as average_rating'))
+            ->groupBy('pokemon_id')
+            ->orderByDesc('average_rating')
+            ->take(10)
+            ->with('pokemon')
+            ->get();
+
+        return view('pokemon.leaderboard', [
+            'pokemons' => $topPokemons,
         ]);
     }
 }
