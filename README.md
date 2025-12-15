@@ -80,6 +80,73 @@ Follow these steps to set up the project locally.
 
    Visit `http://localhost:8000` in your browser.
 
+## 🏭 Production Setup
+
+Deploying the application to production requires a few more steps to ensure it is secure, fast, and stable.
+
+### 1. Server Requirements
+
+- PHP 8.2 or higher with the following extensions: `curl`, `dom`, `fileinfo`, `iconv`, `mbstring`, `pdo`, `tokenizer`, `xml`, `xmlwriter`, `zip`.
+- A database server (e.g., MySQL, PostgreSQL).
+- A web server (e.g., Nginx, Apache).
+- Composer, Node.js, and NPM.
+
+### 2. Deployment Steps
+
+1.  **Clone the repository** on your server.
+2.  **Install Composer Dependencies**:
+    ```bash
+    composer install --no-dev --optimize-autoloader
+    ```
+3.  **Install Frontend Dependencies**:
+    ```bash
+    npm install
+    ```
+4.  **Build Frontend Assets**:
+    ```bash
+    npm run build
+    ```
+5.  **Configure Environment**:
+    Create a `.env` file from `.env.example`.
+    ```bash
+    cp .env.example .env
+    ```
+    Edit the `.env` file and set the following:
+    - `APP_ENV=production`
+    - `APP_DEBUG=false`
+    - `APP_KEY` (generate one if empty)
+    - `DB_CONNECTION`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
+    - Any other application-specific settings.
+
+6.  **Generate Application Key**:
+    If you haven't set `APP_KEY` in the `.env` file, run:
+    ```bash
+    php artisan key:generate --force
+    ```
+7.  **Run Database Migrations**:
+    ```bash
+    php artisan migrate --force
+    ```
+    The `--force` flag is required to run migrations in production.
+
+8.  **Optimize for Production**:
+    Cache your configuration and routes for a significant performance boost.
+    ```bash
+    php artisan optimize
+    php artisan view:cache
+    ```
+
+9.  **Set Directory Permissions**:
+    The web server needs to be able to write to the `storage` and `bootstrap/cache` directories.
+    ```bash
+    chmod -R 775 storage bootstrap/cache
+    chown -R www-data:www-data storage bootstrap/cache
+    ```
+    *(Adjust `www-data` to your web server's user)*
+
+10. **Configure Web Server**:
+    Point your web server's document root to the `public` directory. Ensure URL rewriting is enabled to direct all requests to `public/index.php`.
+
 ## 🔧 Useful Commands
 
 ### Clearing Caches
